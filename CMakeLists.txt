@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-project(Breakout
+project(breakout
     VERSION 1.0
     LANGUAGES CXX
 )
@@ -22,23 +22,23 @@ find_package(SDL3 CONFIG QUIET)
 
 if(NOT SDL3_FOUND)
 
-    message(STATUS "SDL3 not found locally.")
-    message(STATUS "Downloading SDL3...")
+  message(STATUS "SDL3 not found locally.")
+  message(STATUS "Downloading SDL3...")
 
-    include(FetchContent)
+  include(FetchContent)
 
-    FetchContent_Declare(
+  FetchContent_Declare(
         SDL3
         GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
         GIT_TAG main
         GIT_SHALLOW TRUE
     )
 
-    FetchContent_MakeAvailable(SDL3)
+  FetchContent_MakeAvailable(SDL3)
 
 else()
 
-    message(STATUS "Using locally installed SDL3.")
+  message(STATUS "Using locally installed SDL3.")
 
 endif()
 
@@ -54,23 +54,53 @@ find_package(SDL3_ttf CONFIG QUIET)
 
 if(NOT SDL3_ttf_FOUND)
 
-    message(STATUS "SDL3_ttf not found locally.")
-    message(STATUS "Downloading SDL3_ttf...")
+  message(STATUS "SDL3_ttf not found locally.")
+  message(STATUS "Downloading SDL3_ttf...")
 
-    include(FetchContent)
+  include(FetchContent)
 
-    FetchContent_Declare(
+  FetchContent_Declare(
         SDL3_ttf
         GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
         GIT_TAG main
         GIT_SHALLOW TRUE
     )
 
-    FetchContent_MakeAvailable(SDL3_ttf)
+  FetchContent_MakeAvailable(SDL3_ttf)
 
 else()
 
-    message(STATUS "Using locally installed SDL3_ttf.")
+  message(STATUS "Using locally installed SDL3_ttf.")
+
+endif()
+
+# ------------------------------------------------------------
+# Try to find a locally installed SDL3_ttf first
+# ------------------------------------------------------------
+
+find_package(SDL3_mixer CONFIG QUIET)
+
+# ------------------------------------------------------------
+# If SDL3_ttf was not found, download it
+# ------------------------------------------------------------
+
+if(NOT SDL3_mixer_FOUND)
+
+  message(STATUS "SDL3_mixer not found locally.")
+  message(STATUS "Downloading SDL3_mixer...")
+
+  include(FetchContent)
+
+  FetchContent_Declare(
+    SDL3_mixer
+    GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
+    GIT_TAG main
+)
+
+  FetchContent_MakeAvailable(SDL3_mixer)
+else()
+
+  message(STATUS "Using locally installed SDL3_ttf.")
 
 endif()
 
@@ -78,7 +108,7 @@ endif()
 # Executable
 # ------------------------------------------------------------
 
-add_executable(Breakout WIN32
+add_executable(breakout WIN32
     src/main.cpp
     src/game.cpp
     src/paddle.cpp
@@ -86,14 +116,18 @@ add_executable(Breakout WIN32
     src/brick.cpp
     src/text.cpp
     src/menu.cpp
-    src/optioons_menu.cpp
+    src/options_menu.cpp
+    src/high_score.cpp
+    src/audio.cpp
+    src/particle.cpp
+    src/powerup.cpp
 )
 
 # ------------------------------------------------------------
 # Include directories
 # ------------------------------------------------------------
 
-target_include_directories(Breakout
+target_include_directories(breakout
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
@@ -102,10 +136,11 @@ target_include_directories(Breakout
 # Link SDL3
 # ------------------------------------------------------------
 
-target_link_libraries(Breakout
+target_link_libraries(breakout
     PRIVATE
         SDL3::SDL3
         SDL3_ttf::SDL3_ttf
+        SDL3_mixer::SDL3_mixer
 )
 
 # --------------------------------------------------
@@ -113,12 +148,12 @@ target_link_libraries(Breakout
 # --------------------------------------------------
 
 add_custom_command(
-    TARGET Breakout
+    TARGET breakout
     POST_BUILD
 
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_SOURCE_DIR}/assets"
-        "$<TARGET_FILE_DIR:Breakout>/assets"
+        "$<TARGET_FILE_DIR:breakout>/assets"
 
     COMMENT "Copying assets..."
 )

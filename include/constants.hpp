@@ -25,4 +25,18 @@ constexpr int BrickRows = 5;
 
 constexpr float BrickTopMargin = 60.0f;
 constexpr int BrickScore = 100;
+
+// Power-up constants
+constexpr float PowerUpSize = 16.0f;
+constexpr float PowerUpSpeed = 150.0f;
+constexpr int PowerUpChance = 25; // percent chance a brick drops a power-up
+
+constexpr float PowerUpDuration = 10.0f; // seconds
+
+// Particle constants
+constexpr int MaxParticles = 200;
+constexpr float ParticleLife = 0.8f;
+
+// Level constants
+constexpr int MaxLevels = 5;
 } // namespace Constants
