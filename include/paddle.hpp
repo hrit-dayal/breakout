@@ -16,6 +16,8 @@ public:
     void SetMovingLeft(bool moving);
     void SetMovingRight(bool moving);
 
+    void SetWidth(float width);
+
     SDL_FRect GetRect() const;
 
 private:

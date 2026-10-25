@@ -17,27 +17,37 @@ void Ball::Initialize() {
   mVelocityY = -mSpeed * 0.8f;
 }
 
-void Ball::Update(float deltaTime) {
-  mX += mVelocityX * deltaTime;
-  mY += mVelocityY * deltaTime;
+void Ball::Update(float deltaTime)
+{
+    // Reset the collision flag for this frame.
+    mHitWall = false;
 
-  // Left wall.
-  if (mX <= 0.0f) {
-    mX = 0.0f;
-    mVelocityX = -mVelocityX;
-  }
+    mX += mVelocityX * deltaTime;
+    mY += mVelocityY * deltaTime;
 
-  // Right wall.
-  if (mX + mSize >= Constants::WindowWidth) {
-    mX = Constants::WindowWidth - mSize;
-    mVelocityX = -mVelocityX;
-  }
+    // Left wall.
+    if (mX <= 0.0f)
+    {
+        mX = 0.0f;
+        mVelocityX = -mVelocityX;
+        mHitWall = true;
+    }
 
-  // Top wall.
-  if (mY <= 0.0f) {
-    mY = 0.0f;
-    mVelocityY = -mVelocityY;
-  }
+    // Right wall.
+    if (mX + mSize >= Constants::WindowWidth)
+    {
+        mX = Constants::WindowWidth - mSize;
+        mVelocityX = -mVelocityX;
+        mHitWall = true;
+    }
+
+    // Top wall.
+    if (mY <= 0.0f)
+    {
+        mY = 0.0f;
+        mVelocityY = -mVelocityY;
+        mHitWall = true;
+    }
 }
 
 void Ball::Render(SDL_Renderer *renderer) const {
@@ -86,6 +96,13 @@ void Ball::BounceOffPaddle(const SDL_FRect &paddle) {
 
 SDL_FRect Ball::GetRect() const { return SDL_FRect{mX, mY, mSize, mSize}; }
 
+void Ball::SetSpeedMultiplier(float multiplier)
+{
+    mVelocityX *= multiplier;
+    mVelocityY *= multiplier;
+    mSpeed *= multiplier;
+}
+
 void Ball::Reset() {
   mX = (Constants::WindowWidth - mSize) / 2.0f;
 
@@ -130,4 +147,9 @@ void Ball::BounceOffBrick(const SDL_FRect &brick) {
       mY = brick.y - mSize;
     }
   }
+}
+
+bool Ball::HitWall() const
+{
+    return mHitWall;
 }

@@ -49,6 +49,11 @@ void Paddle::SetMovingRight(bool moving)
     mMovingRight = moving;
 }
 
+void Paddle::SetWidth(float width)
+{
+    mWidth = width;
+}
+
 void Paddle::Render(SDL_Renderer* renderer) const
 {
     SDL_FRect rect{
